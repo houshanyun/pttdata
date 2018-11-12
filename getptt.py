@@ -55,8 +55,6 @@ class GetPttdata:
             print(e)
             sys.exit()
             
-        
-
 
     def get_data(self):
         for sp in self.get_soup():
@@ -93,6 +91,7 @@ class GetPttdata:
         df = pd.DataFrame(datas, index=dexs)
         df.to_excel('pttdata.xlsx')
 
+
 print('請輸入想抓取的ptt看板網址！')
 print('網址格式：https://www.ptt.cc/bbs/看板名稱/index.html.')
 url = input('網址： ')
@@ -102,13 +101,17 @@ pat_str = pat.findall(url)
 if pat_str:
     print('解析網址中......')
     pttobj = GetPttdata(url)
+
     print('網站資料抓取中......')
     pttobj.get_index()
     pttobj.get_soup()
+
     print('資料整理中......')
     pttobj.get_data()
+
     print('資料輸出中......')
     pttobj.to_exc()
+    
     print("資料以輸出試算表'pttdata.xlsx'")
 else:
     print('網址格式錯誤')
