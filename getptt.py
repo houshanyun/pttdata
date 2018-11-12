@@ -35,7 +35,7 @@ class GetPttdata:
 
     def get_soup(self):
         soups =list()
-        _, b = self.get_index()
+        (_, b) = self.get_index()
         try:
             for page in range(int(b[0])+1 ,int(b[0])-9, -1):
                 html = requests.get(
@@ -49,7 +49,6 @@ class GetPttdata:
                 else:
                     print('網站無法讀取！')
                     html.raise_for_status()
-                    #sys.exit()
             return soups
         except Exception as e:
             print(e)
@@ -62,12 +61,12 @@ class GetPttdata:
             author_data = sp.select('.author')
             date_data = sp.find_all('div',{'class':'date'})
 
-            for _ in author_data:
-                self.author_list.append(_.text)
-            for _ in date_data:
-                self.date_list.append(_.text)
+            self.author_list += [_.text for _ in author_data]
+
+            self.date_list += [_.text for _ in date_data]
+
             for _ in title_data:
-                pat = _.text.replace('\n', '')
+                pat = re.sub(r'\s', '', _.text)
                 self.title_list.append(pat)
             for _ in title_data:
                 self.href_list.append(_.find('a'))
