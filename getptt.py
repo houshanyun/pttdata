@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import re
 import time
 import sys
@@ -88,7 +90,8 @@ class GetPttdata:
         ]
         dexs = ['title', 'author', 'date', 'href']
         df = pd.DataFrame(datas, index=dexs)
-        df.to_excel('pttdata.xlsx')
+        df_chr = df.stack()
+        df_chr.to_excel('pttdata.xlsx')
 
 
 print('請輸入想抓取的ptt看板網址！')
