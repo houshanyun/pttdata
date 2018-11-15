@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import re
 import time
 import sys
@@ -29,15 +27,12 @@ class GetPttdata:
         atags = self.soup.find_all('a',{'class':'btn wide'})
         for atag in atags:
             pat = re.findall(r'\d{2,}', atag.get('href'))
-            if pat:
-                ptt_url = 'https://www.ptt.cc'+ atag.get('href')
-                new_url = ptt_url.replace(pat[0],str(int(pat[0])+1))
-                return new_url, pat
+            if pat: return pat
 
 
     def get_soup(self):
         soups =list()
-        (_, b) = self.get_index()
+        b = self.get_index()
         try:
             for page in range(int(b[0])+1 ,int(b[0])-9, -1):
                 html = requests.get(
@@ -45,7 +40,7 @@ class GetPttdata:
                     headers=self.header
                 )
                 if html.status_code == 200:
-                    sp = BeautifulSoup(html.text, 'lxml')
+                    sp = BeautifulSoup(html.text)
                     soups.append(sp)
                     time.sleep(3)
                 else:
@@ -70,15 +65,15 @@ class GetPttdata:
             for _ in title_data:
                 pat = re.sub(r'\s', '', _.text)
                 self.title_list.append(pat)
-            for _ in title_data:
-                self.href_list.append(_.find('a'))
+
+            self.href_list = [_.find('a') for _ in title_data]
+
             for url in self.href_list:
                 if url == None:
                     self.url_list.append(0)
                 elif url:
                     href = url.get('href')
                     self.url_list.append('https://www.ptt.cc'+ href)
-            self.href_list.clear()
 
 
     def to_exc(self):
@@ -97,7 +92,7 @@ class GetPttdata:
 print('請輸入想抓取的ptt看板網址！')
 print('網址格式：https://www.ptt.cc/bbs/看板名稱/index.html.')
 url = input('網址： ')
-pat = re.compile(r'https://www\.ptt\.cc/bbs/[a-zA-Z]+/index\.html')
+pat = re.compile(r'https://www\.ptt\.cc/bbs/.+/index\.html')
 pat_str = pat.findall(url)
 
 if pat_str:
