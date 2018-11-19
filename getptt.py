@@ -36,7 +36,7 @@ class GetPttdata:
         try:
             for page in range(int(b[0])+1 ,int(b[0])-9, -1):
                 html = requests.get(
-                    'https://www.ptt.cc/bbs/Python/index' + str(page) + '.html',
+                    str(page).join(['https://www.ptt.cc/bbs/Python/index', '.html']),
                     headers=self.header
                 )
                 if html.status_code == 200:
