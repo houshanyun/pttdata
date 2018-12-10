@@ -27,20 +27,23 @@ class GetPttdata:
         atags = self.soup.find_all('a',{'class':'btn wide'})
         for atag in atags:
             pat = re.findall(r'\d{2,}', atag.get('href'))
-            if pat: return pat
+            if pat:
+                ptt_name = atag.get('href').split('/')[2]
+                print(pat, ptt_name) 
+                return pat, ptt_name
 
 
     def get_soup(self):
         soups =list()
-        b = self.get_index()
+        (b, a) = self.get_index()
         try:
             for page in range(int(b[0])+1 ,int(b[0])-9, -1):
                 html = requests.get(
-                    str(page).join(['https://www.ptt.cc/bbs/Python/index', '.html']),
+                    str(page).join([f'https://www.ptt.cc/bbs/{a}/index', '.html']),
                     headers=self.header
                 )
                 if html.status_code == 200:
-                    sp = BeautifulSoup(html.text)
+                    sp = BeautifulSoup(html.text, 'lxml')
                     soups.append(sp)
                     time.sleep(3)
                 else:
@@ -69,7 +72,7 @@ class GetPttdata:
             self.href_list = [_.find('a') for _ in title_data]
 
             for url in self.href_list:
-                if url == None:
+                if url is None:
                     self.url_list.append(0)
                 elif url:
                     href = url.get('href')
